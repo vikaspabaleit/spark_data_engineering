@@ -12,18 +12,19 @@ def stop_context(spark):
         spark.stop()
 
 
-def read_from_hive(spark, src_customer_sales_tbl, env):
-    if env == "dev":
-        db_nm = "db_nm"
-        tbl_nm = "src_customer_sales_tbl"
+def extract_from_hive(spark, db_nm: str, tbl_nm: str, env: str, filter_condition: str = None):
+    if env in ["dev", "prod"]:
         query = f"SELECT * FROM {db_nm}.{tbl_nm}"
+        if filter_condition:
+            query += f" WHERE {filter_condition}"
         df = spark.sql(query)
-    elif env == "prod":
-        df = spark.read.option("header", "true").csv(src_customer_sales_tbl)
     else:
+        # Local/other env fallback to CSV
         df = spark.read.format("csv") \
             .option("header", True) \
-            .option("InferSchema", True) \
-            .load(src_customer_sales_tbl)
+            .option("inferSchema", True) \
+            .load("D:\\Projects\\spark_data_engineering\\src\\test\\dummydata\\inputdata\\customers_raw.csv")
+        if filter_condition:
+            df = df.filter(filter_condition)
 
     return df

@@ -2,8 +2,8 @@ import sys, logging
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
 
-from src.main.common.configs.spark_config import spark_conf_params
-from src.main.common.constants import table_constants as tc
+from src.test.common.configs.spark_config import spark_conf_params
+from src.test.common.constants import table_constants as tc
 
 
 def create_spark_session(param_dict):
